@@ -111,7 +111,7 @@ jobs:
             export AWS_SECRET_ACCESS_KEY=${<< parameters.aws_secret_access_key >>}
             terraform init
             terraform workspace select << parameters.workspace >> || terraform workspace new << parameters.workspace >>
-            terraform plan -input=false -out=tfplan -compact-warnings -var-file=../../secrets/terraform.dev.tfvars
+            terraform plan -input=false -out=tfplan -compact-warnings -var-file=secrets/terraform.dev.tfvars
 
       - persist_to_workspace:
           root: ~/project
