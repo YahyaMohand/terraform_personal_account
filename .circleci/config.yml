@@ -162,29 +162,29 @@ workflows:
 
 ######################### Staging Deployment ############################
       - plan:
-          name: plan staging
-          workspace: staging
+          name: plan dev
+          workspace: dev
           aws_access_key_id: AWS_ACCESS_KEY_ID
           aws_secret_access_key: AWS_SECRET_ACCESS_KEY
           requires:
             - init
 
       - hold:
-          name: hold staging
+          name: hold dev
           type: approval
           requires:
-            - plan staging
+            - plan dev
           filters:
             branches:
               only: master
 
       - apply:
-          name: apply staging
-          workspace: staging
+          name: apply dev
+          workspace: dev
           aws_access_key_id: AWS_ACCESS_KEY_ID
           aws_secret_access_key: AWS_SECRET_ACCESS_KEY
           requires:
-            - hold staging
+            - hold dev
 
 ######################### Production Deployment ############################
       - plan:
