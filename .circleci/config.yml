@@ -1,213 +1,68 @@
 version: 2.1
 
 executors:
-  terraform_docker:
+  terraform:
     docker:
-      - image: hashicorp/terraform:latest
-    working_directory: ~/project/terraform
+      - image: hashicorp/terraform:1.3.6
+        environment:
+          AWS_ACCESS_KEY_ID: AWS_ACCESS_KEY
+          AWS_SECRET_ACCESS_KEY: AWS_SECRET_KEY
+    working_directory: ~/repo
 
 jobs:
-  checkout:
-    docker:
-      - image: cimg/base:stable-20.04
+  plan:
+    executor: terraform
     steps:
       - checkout
-
-      - persist_to_workspace:
-          root: ~/project
-          paths:
-            - .
-
-  init:
-    parameters:
-      aws_access_key_id:
-        type: env_var_name
-      aws_secret_access_key:
-        type: env_var_name
-    executor: terraform_docker
-    steps:
-      - attach_workspace:
-          at: ~/project
-
+      - setup_remote_docker
       - run:
-          name: Install system deps
+          name: Install AWS CLI
           command: |
-            apk add --no-cache git bash curl openssh python3
-
+            apt-get update && apt-get install -y unzip curl
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
-          name: Setup SSH Key
+          name: Set up Terraform
           command: |
-            mkdir -p ~/.ssh
-            ssh-keyscan github.com >> ~/.ssh/known_hosts
-            echo $SSH_KEY | base64 -d > ~/.ssh/id_circleci
-            chmod 600 ~/.ssh/id_circleci
-            echo $SSH_CONFIG | base64 -d > ~/.ssh/config
-
-      - run:
-          name: Install tools
-          command: |
-            git clone https://github.com/tfutils/tfenv.git ~/.tfenv
-            echo 'export PATH="$HOME/.tfenv/bin:$PATH"' >> ~/.bashrc
-            source ~/.bashrc
-            tfenv install $(cat .terraform-version)
-            tfenv use $(cat .terraform-version)
-
-      - run:
-          name: Init
-          command: |
-            export AWS_ACCESS_KEY_ID=${<< parameters.aws_access_key_id >>}
-            export AWS_SECRET_ACCESS_KEY=${<< parameters.aws_secret_access_key >>}
             terraform init
-
-      - persist_to_workspace:
-          root: ~/project
-          paths:
-            - .
-
-  tfsec_scan:
-    executor: terraform_docker
-    steps:
-      - attach_workspace:
-          at: ~/project
-
+            terraform workspace select staging || terraform workspace new staging
       - run:
-          name: Download tfsec
-          command: |
-            wget -O /usr/local/bin/tfsec https://github.com/tfsec/tfsec/releases/download/v0.38.4/tfsec-linux-amd64
-            chmod +x /usr/local/bin/tfsec
-
+          name: Decrypt secrets
+          command: sops -d secrets/secrets.yaml > secrets/decrypted_secrets.yaml
       - run:
-          name: Run tfsec
-          command: tfsec --soft-fail .
-
-  plan:
-    parameters:
-      workspace:
-        type: string
-      aws_access_key_id:
-        type: env_var_name
-      aws_secret_access_key:
-        type: env_var_name
-    executor: terraform_docker
-    steps:
-      - attach_workspace:
-          at: ~/project
-
-      - run:
-          name: Install system deps
-          command: |
-            apk add --no-cache git bash curl openssh python3
-
-      - run:
-          name: Install tools
-          command: |
-            curl -L https://github.com/mozilla/sops/releases/download/v3.7.1/sops-v3.7.1.linux --output /usr/local/bin/sops
-            chmod u+x /usr/local/bin/sops
-
-      - run:
-          name: Terraform plan
-          command: |
-            export AWS_ACCESS_KEY_ID=${<< parameters.aws_access_key_id >>}
-            export AWS_SECRET_ACCESS_KEY=${<< parameters.aws_secret_access_key >>}
-            terraform init
-            terraform workspace select << parameters.workspace >> || terraform workspace new << parameters.workspace >>
-            terraform plan -input=false -out=tfplan -compact-warnings -var-file=./secrets/terraform.dev.tfvars
-
-      - persist_to_workspace:
-          root: ~/project
-          paths:
-            - .
+          name: Terraform Plan
+          command: terraform plan -var-file="secrets/decrypted_secrets.yaml"
 
   apply:
-    parameters:
-      workspace:
-        type: string
-      aws_access_key_id:
-        type: env_var_name
-      aws_secret_access_key:
-        type: env_var_name
-    executor: terraform_docker
+    executor: terraform
     steps:
-      - attach_workspace:
-          at: ~/project
-
+      - checkout
+      - setup_remote_docker
       - run:
-          name: Install system deps
+          name: Install AWS CLI
           command: |
-            apk add --no-cache git bash curl openssh python3
-
+            apt-get update && apt-get install -y unzip curl
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
-          name: Terraform apply
+          name: Set up Terraform
           command: |
-            export AWS_ACCESS_KEY_ID=${<< parameters.aws_access_key_id >>}
-            export AWS_SECRET_ACCESS_KEY=${<< parameters.aws_secret_access_key >>}
-            terraform workspace select << parameters.workspace >>
-            terraform apply -input=false -auto-approve tfplan
+            terraform init
+            terraform workspace select staging || terraform workspace new staging
+      - run:
+          name: Decrypt secrets
+          command: sops -d secrets/secrets.yaml > secrets/decrypted_secrets.yaml
+      - run:
+          name: Terraform Apply
+          command: terraform apply -var-file="secrets/decrypted_secrets.yaml" -auto-approve
 
 workflows:
+  version: 2
   terraform:
     jobs:
-      - checkout
-
-      - init:
-          context: TERRAFORM_MODULES
-          aws_access_key_id: AWS_ACCESS_KEY_ID
-          aws_secret_access_key: AWS_SECRET_ACCESS_KEY
-          requires:
-            - checkout
-
-      - tfsec_scan:
-          requires:
-            - init
-
-######################### Staging Deployment ############################
-      - plan:
-          name: plan dev
-          workspace: dev
-          aws_access_key_id: AWS_ACCESS_KEY_ID
-          aws_secret_access_key: AWS_SECRET_ACCESS_KEY
-          requires:
-            - init
-
-      - hold:
-          name: hold dev
-          type: approval
-          requires:
-            - plan dev
-          filters:
-            branches:
-              only: master
-
+      - plan
       - apply:
-          name: apply dev
-          workspace: dev
-          aws_access_key_id: AWS_ACCESS_KEY_ID
-          aws_secret_access_key: AWS_SECRET_ACCESS_KEY
           requires:
-            - hold dev
-
-######################### Production Deployment ############################
-      - plan:
-          name: plan production
-          workspace: production
-          aws_access_key_id: PROD_AWS_ACCESS_KEY_ID
-          aws_secret_access_key: PROD_AWS_SECRET_ACCESS_KEY
-          requires:
-            - init
-
-      - hold_production:
-          name: hold production
-          type: approval
-          requires:
-            - plan production
-          filters:
-            branches:
-              only: master
-
-      - apply:
-          name: apply production
-          workspace: production
-          aws_access_key_id: PROD_AWS_ACCESS_KEY_ID
-          aws_secret_access_key: PROD_AWS_SECRET_ACCESS_KEY
-          requires:
-            - hold production
+            - plan
