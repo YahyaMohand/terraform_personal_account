@@ -10,18 +10,23 @@ executors:
     working_directory: ~/repo
 
 jobs:
+  install_aws_cli:
+    docker:
+      - image: hashicorp/terraform:1.3.6
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --no-cache python3 py3-pip curl unzip
+            pip3 install awscli
+
   plan:
-    executor: terraform
+    docker:
+      - image: hashicorp/terraform:1.3.6
     steps:
       - checkout
       - setup_remote_docker
-      - run:
-          name: Install AWS CLI
-          command: |
-            apt-get update && apt-get install -y unzip curl
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
       - run:
           name: Set up Terraform
           command: |
@@ -35,17 +40,11 @@ jobs:
           command: terraform plan -var-file="secrets/decrypted_secrets.yaml"
 
   apply:
-    executor: terraform
+    docker:
+      - image: hashicorp/terraform:1.3.6
     steps:
       - checkout
       - setup_remote_docker
-      - run:
-          name: Install AWS CLI
-          command: |
-            apt-get update && apt-get install -y unzip curl
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
       - run:
           name: Set up Terraform
           command: |
@@ -62,7 +61,10 @@ workflows:
   version: 2
   terraform:
     jobs:
-      - plan
+      - install_aws_cli
+      - plan:
+          requires:
+            - install_aws_cli
       - apply:
           requires:
             - plan
