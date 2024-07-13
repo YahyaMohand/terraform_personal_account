@@ -6,9 +6,7 @@
 # Terraform .terraform directories
 **/.terraform/*
 
-# Ignore secrets
-secrets/*.tfvars
-secrets/*.enc
+
 
 # Ignore specific IDE/editor files
 .vscode/
