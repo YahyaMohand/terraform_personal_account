@@ -4,12 +4,13 @@ orbs:
   aws-cli: circleci/aws-cli@2.0
 
 jobs:
-  plan-apply:
+  terraform-plan:
     docker:
       - image: hashicorp/terraform:1.0.0
     steps:
       - checkout
-      - aws-cli/setup
+      - aws-cli/setup:
+          profile-name: default
       - run:
           name: Terraform Init
           command: |
@@ -25,31 +26,32 @@ jobs:
           paths:
             - tfplan
 
-  apply:
+  terraform-apply:
     docker:
       - image: hashicorp/terraform:1.0.0
     steps:
       - checkout
-      - aws-cli/setup
+      - aws-cli/setup:
+          profile-name: default
       - attach_workspace:
           at: environments/dev
       - run:
           name: Terraform Apply
           command: |
             cd environments/dev
-            terraform apply tfplan
+            terraform apply -auto-approve tfplan
 
 workflows:
   version: 2
-  plan-apply:
+  terraform-workflow:
     jobs:
-      - plan-apply:
-          context: aws
+      - terraform-plan:
+          context: aws-credentials
       - hold-for-approval:
           type: approval
           requires:
-            - plan-apply
-      - apply:
+            - terraform-plan
+      - terraform-apply:
           requires:
             - hold-for-approval
-          context: aws
+          context: aws-credentials
