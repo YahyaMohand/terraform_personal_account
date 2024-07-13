@@ -109,7 +109,6 @@ jobs:
           command: |
             export AWS_ACCESS_KEY_ID=${<< parameters.aws_access_key_id >>}
             export AWS_SECRET_ACCESS_KEY=${<< parameters.aws_secret_access_key >>}
-            sops -d "../../secrets/terraform.dev.tfvars.enc" > "../../secrets/terraform.dev.tfvars"
             terraform init
             terraform workspace select << parameters.workspace >> || terraform workspace new << parameters.workspace >>
             terraform plan -input=false -out=tfplan -compact-warnings -var-file=../../secrets/terraform.dev.tfvars
