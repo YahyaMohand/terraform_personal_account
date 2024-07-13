@@ -34,7 +34,7 @@ jobs:
             terraform workspace select dev || terraform workspace new dev
       - run:
           name: Terraform Plan
-          command: terraform plan -var-file secrets/terraform.dev.tfvars
+          command: terraform plan -var-file=secrets/terraform.dev.tfvars
 
 
 workflows:
