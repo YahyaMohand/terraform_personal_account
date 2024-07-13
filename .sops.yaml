@@ -1,0 +1,3 @@
+creation_rules:
+  - path_regex: secrets/.*\.tfvars$
+    kms: 'arn:aws:kms:us-east-1:767398000142:key/badf6a92-4065-49c5-b9ca-90d5f145d659'
