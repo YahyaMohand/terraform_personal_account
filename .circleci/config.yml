@@ -28,7 +28,7 @@ jobs:
       - checkout
       - run:
           name: List secrets directory
-          command: ls -la secrets
+          command: ls -la 
       - setup_remote_docker
       - run:
           name: Set up Terraform
