@@ -15,7 +15,7 @@ provider "aws" {
 }
 
 module "networking" {
-  source               = "../../modules/networking"
+  source               = "./modules/networking"
   environment          = var.environment
   vpc_cidr             = var.vpc_cidr
   public_subnet_cidrs  = var.public_subnet_cidrs
@@ -25,14 +25,14 @@ module "networking" {
 }
 
 module "ecr" {
-  source          = "../../modules/ecr"
+  source          = "./modules/ecr"
   environment     = var.environment
   repository_name = "${var.environment}-repo"
   common_tags     = var.common_tags
 }
 
 module "elb" {
-  source             = "../../modules/elb"
+  source             = "./modules/elb"
   environment        = var.environment
   vpc_id             = module.networking.vpc_id
   public_subnet_ids  = module.networking.public_subnet_ids
@@ -41,7 +41,7 @@ module "elb" {
 }
 
 module "ecs" {
-  source                = "../../modules/ecs"
+  source                = "./modules/ecs"
   environment           = var.environment
   vpc_id                = module.networking.vpc_id
   private_subnet_ids    = module.networking.private_subnet_ids
@@ -56,7 +56,7 @@ module "ecs" {
 }
 
 module "rds" {
-  source                = "../../modules/rds"
+  source                = "./modules/rds"
   environment           = var.environment
   vpc_id                = module.networking.vpc_id
   private_subnet_ids    = module.networking.private_subnet_ids
