@@ -21,9 +21,9 @@ jobs:
   init:
     parameters:
       aws_access_key_id:
-        type: AWS_ACCESS_KEY
+        type: env_var_name
       aws_secret_access_key:
-        type: AWS_SECRET_KEY
+        type: env_var_name
     executor: terraform_docker
     steps:
       - attach_workspace:
@@ -85,9 +85,9 @@ jobs:
       workspace:
         type: string
       aws_access_key_id:
-        type: AWS_ACCESS_KEY
+        type: env_var_name
       aws_secret_access_key:
-        type: AWS_SECRET_KEY
+        type: env_var_name
     executor: terraform_docker
     steps:
       - attach_workspace:
@@ -124,9 +124,9 @@ jobs:
       workspace:
         type: string
       aws_access_key_id:
-        type: AWS_ACCESS_KEY
+        type: env_var_name
       aws_secret_access_key:
-        type: AWS_SECRET_KEY
+        type: env_var_name
     executor: terraform_docker
     steps:
       - attach_workspace:
