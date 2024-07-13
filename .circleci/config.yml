@@ -26,6 +26,9 @@ jobs:
       - image: hashicorp/terraform:1.3.6
     steps:
       - checkout
+      - run:
+          name: List secrets directory
+          command: ls -la secrets
       - setup_remote_docker
       - run:
           name: Set up Terraform
