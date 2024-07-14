@@ -1,0 +1,30 @@
+# Terraform state files
+*.tfstate
+*.tfstate.*
+*.backup
+
+# Terraform .terraform directories
+**/.terraform/*
+
+
+
+# Ignore specific IDE/editor files
+.vscode/
+.idea/
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Ignore specific files and directories in modules and environments
+modules/**/.terraform/
+modules/**/.terraform.lock.hcl
+environments/**/.terraform/
+environments/**/.terraform.lock.hcl
+
+# Ignore SOPS encrypted secrets
+*.enc
+
+# Ignore other specific files
+*.log
+*.bak

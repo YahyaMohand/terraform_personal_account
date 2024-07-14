@@ -1,0 +1,30 @@
+[
+    {
+      "name": "my-app-container",
+      "image": "your-docker-image:latest",
+      "essential": true,
+      "memory": 512,
+      "cpu": 256,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 80
+        }
+      ],
+      "environment": [
+        {
+          "name": "ENVIRONMENT_VARIABLE_NAME",
+          "value": "value"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/my-app",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+  
