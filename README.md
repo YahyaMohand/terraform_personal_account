@@ -3,13 +3,21 @@
 This repository contains Terraform configurations for managing a personal AWS account. Below is an explanation of each module included in this repository.
 
 .circleci: Contains CircleCI configurations for continuous integration.
+
 modules: Includes reusable Terraform modules.
+
 secrets: Likely contains sensitive data, encrypted and managed securely.
+
 main.tf: The main Terraform configuration file defining resources.
+
 outputs.tf: Specifies the outputs of the Terraform configuration.
+
 variables.tf: Defines input variables for the Terraform configuration.
+
 .sops.yaml: Configuration for SOPS (Secrets OPerationS) to handle secrets encryption.
+
 .terraform.lock.hcl: Lock file to ensure consistent Terraform operations.
+
 ## Modules
 
 ### ecr
@@ -63,7 +71,6 @@ terraform init
 terraform plan -var-file=secrets/terraform.dev.tfvars
 terraform apply -var-file=secrets/terraform.dev.tfvars
 ```
-https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%202.31.53%20PM.png
 
 
 <div id="header" align="center">
