@@ -67,15 +67,15 @@ https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Scree
 
 
 <div id="header" align="center">
-  <img src="https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%202.31.53%20PM.png" width="500" height="500"/>
+  <img src="https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%202.31.53%20PM.png" width="1000" height="500"/>
 </div>
 
 <div id="header" align="center">
-  <img src="https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%202.32.09%20PM.png" width="500" height="500"/>
+  <img src="https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%202.32.09%20PM.png" width="1000" height="500"/>
 </div>
 
 <div id="header" align="center">
-  <img src="https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%202.32.53%20PM.png" width="500" height="500"/>
+  <img src="https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%202.32.53%20PM.png" width="1000" height="500"/>
 </div>
 
 ## Cleanup
@@ -86,7 +86,7 @@ After you are done, make sure to remove the resources to avoid unnecessary AWS c
 terraform destroy -var-file=secrets/terraform.dev.tfvars
 ```
 <div id="header" align="center">
-  <img src="https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%202.44.13%20PM.png" width="500" height="500"/>
+  <img src="https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%202.44.13%20PM.png" width="1000" height="500"/>
 </div>
 
 ---
