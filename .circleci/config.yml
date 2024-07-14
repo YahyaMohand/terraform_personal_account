@@ -5,8 +5,8 @@ executors:
     docker:
       - image: hashicorp/terraform:1.3.6
         environment:
-          AWS_ACCESS_KEY_ID: AWS_ACCESS_KEY
-          AWS_SECRET_ACCESS_KEY: AWS_SECRET_KEY
+          AWS_ACCESS_KEY_ID: AWS_ACCESS_KEY_ID
+          AWS_SECRET_ACCESS_KEY: AWS_SECRET_ACCESS_KEY
     working_directory: ~/repo
 
 jobs:
@@ -28,17 +28,40 @@ jobs:
       - checkout
       - run:
           name: List secrets directory
-          command: ls -la 
+          command: ls -la secrets
       - setup_remote_docker
       - run:
           name: Set up Terraform
           command: |
             terraform init
-            terraform workspace select dev || terraform workspace new dev
+            terraform workspace select staging || terraform workspace new staging
+      - run:
+          name: Decrypt secrets
+          command: sops -d secrets/secrets.yaml > secrets/decrypted_secrets.yaml
       - run:
           name: Terraform Plan
-          command: terraform plan -var-file=secrets/terraform.dev.tfvars
+          command: terraform plan -var-file="secrets/terraform.dev.tfvars"
 
+  apply:
+    docker:
+      - image: hashicorp/terraform:1.3.6
+    steps:
+      - checkout
+      - run:
+          name: List secrets directory
+          command: ls -la secrets
+      - setup_remote_docker
+      - run:
+          name: Set up Terraform
+          command: |
+            terraform init
+            terraform workspace select staging || terraform workspace new staging
+      - run:
+          name: Decrypt secrets
+          command: sops -d secrets/secrets.yaml > secrets/decrypted_secrets.yaml
+      - run:
+          name: Terraform Apply
+          command: terraform apply -var-file="secrets/terraform.dev.tfvars" -auto-approve
 
 workflows:
   version: 2
@@ -48,3 +71,6 @@ workflows:
       - plan:
           requires:
             - install_aws_cli
+      - apply:
+          requires:
+            - plan
