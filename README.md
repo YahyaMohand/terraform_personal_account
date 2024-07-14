@@ -1,5 +1,3 @@
----
-
 # Terraform Personal Account Configuration
 
 This repository contains Terraform configurations for managing a personal AWS account. Below is an explanation of each module included in this repository.
