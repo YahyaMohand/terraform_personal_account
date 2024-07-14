@@ -1,11 +1,17 @@
-Here’s the updated README content with the additional instructions:
-
 ---
 
 # Terraform Personal Account Configuration
 
 This repository contains Terraform configurations for managing a personal AWS account. Below is an explanation of each module included in this repository.
 
+.circleci: Contains CircleCI configurations for continuous integration.
+modules: Includes reusable Terraform modules.
+secrets: Likely contains sensitive data, encrypted and managed securely.
+main.tf: The main Terraform configuration file defining resources.
+outputs.tf: Specifies the outputs of the Terraform configuration.
+variables.tf: Defines input variables for the Terraform configuration.
+.sops.yaml: Configuration for SOPS (Secrets OPerationS) to handle secrets encryption.
+.terraform.lock.hcl: Lock file to ensure consistent Terraform operations.
 ## Modules
 
 ### ecr
@@ -37,7 +43,9 @@ This repository contains Terraform configurations for managing a personal AWS ac
 
 You can view and manage the CI/CD workflow in CircleCI. The CircleCI configuration is set up to automatically plan and apply the Terraform changes. Visit the [CircleCI dashboard](https://circleci.com) to see the workflow, review the plans, and apply the changes if necessary.
 
-![CircleCI Status](images/Screenshot 2024-07-14 at 6.22.13 PM.png)
+<div id="header" align="center">
+  <img src="https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%206.22.13%20PM.png" width="1000" height="600"/>
+</div>
 
 
 
@@ -57,12 +65,20 @@ terraform init
 terraform plan -var-file=secrets/terraform.dev.tfvars
 terraform apply -var-file=secrets/terraform.dev.tfvars
 ```
-![CircleCI Status](images/Screenshot 2024-07-14 at 2.31.53 PM.png)
+https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%202.31.53%20PM.png
 
-![CircleCI Status](images/Screenshot 2024-07-14 at 2.32.09 PM.png)
 
-![CircleCI Status](images/images/Screenshot 2024-07-14 at 2.32.53 PM.png)
+<div id="header" align="center">
+  <img src="https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%202.31.53%20PM.png" width="500" height="500"/>
+</div>
 
+<div id="header" align="center">
+  <img src="https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%202.32.09%20PM.png" width="500" height="500"/>
+</div>
+
+<div id="header" align="center">
+  <img src="https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%202.32.53%20PM.png" width="500" height="500"/>
+</div>
 
 ## Cleanup
 
@@ -71,9 +87,8 @@ After you are done, make sure to remove the resources to avoid unnecessary AWS c
 ```bash
 terraform destroy -var-file=secrets/terraform.dev.tfvars
 ```
-![CircleCI Status](images/images/images/Screenshot 2024-07-14 at 2.44.13 PM.png)
-
+<div id="header" align="center">
+  <img src="https://github.com/YahyaMohand/terraform_personal_account/blob/main/images/Screenshot%202024-07-14%20at%202.44.13%20PM.png" width="500" height="500"/>
+</div>
 
 ---
-
-You can customize the details in the README file as needed.
