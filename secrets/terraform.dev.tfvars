@@ -18,7 +18,7 @@ task_memory          = "512"
 service_desired_count = 2
 
 # RDS
-db_engine_version    = "13.7"
+db_engine_version    = "16.3"
 db_instance_class    = "db.t3.micro"
 db_allocated_storage = 20
 db_name              = "devdb"
