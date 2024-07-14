@@ -34,10 +34,7 @@ jobs:
           name: Set up Terraform
           command: |
             terraform init
-            terraform workspace select staging || terraform workspace new staging
-      - run:
-          name: Decrypt secrets
-          command: sops -d secrets/secrets.yaml > secrets/decrypted_secrets.yaml
+            terraform workspace select dev || terraform workspace new dev
       - run:
           name: Terraform Plan
           command: terraform plan -var-file="secrets/terraform.dev.tfvars"
@@ -55,10 +52,7 @@ jobs:
           name: Set up Terraform
           command: |
             terraform init
-            terraform workspace select staging || terraform workspace new staging
-      - run:
-          name: Decrypt secrets
-          command: sops -d secrets/secrets.yaml > secrets/decrypted_secrets.yaml
+            terraform workspace select dev || terraform workspace new dev
       - run:
           name: Terraform Apply
           command: terraform apply -var-file="secrets/terraform.dev.tfvars" -auto-approve
